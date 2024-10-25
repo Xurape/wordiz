@@ -57,7 +57,7 @@ export default function Index() {
     slotIndex: number,
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if (gameOver) return; // Prevent key actions if game is over
+    if (gameOver) return;
 
     if (
       e.key === "Backspace" &&
@@ -87,7 +87,6 @@ export default function Index() {
 
         setCorrectness(newCorrectness);
 
-        // alert("Parabéns! Acertaste na palavra!");
         setIsExploding(true);
         setTimeout(() => {
           setIsExploding(false);
@@ -129,14 +128,6 @@ export default function Index() {
       }
 
       setCorrectness(newCorrectness);
-
-      if (
-        newCorrectness[currentAttempt].every((letter) => letter === "correct")
-      ) {
-        alert("Parabéns! Acertaste na palavra!");
-        setGameOver(true);
-        return;
-      }
       setCurrentAttempt(currentAttempt + 1);
       setCurrentSlot(0);
     }
@@ -152,7 +143,7 @@ export default function Index() {
         />
       </Head>
       <div className={styles.main}>
-        <h1 className={styles.h1}>Descobre a palavra diária ✨</h1>
+        <h1 className={styles.h1}>Descobre a palavra 🫣</h1>
         <div className={styles.confetti_left}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
         <div className={styles.confetti_right}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
         <div className={styles.words}>
