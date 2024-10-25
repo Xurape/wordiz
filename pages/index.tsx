@@ -76,6 +76,20 @@ export default function Index() {
         return;
       }
 
+      if (values[currentAttempt].join("").toUpperCase() === word.toUpperCase()) {
+        const newCorrectness = correctness.map((attempt) => [...attempt]);
+
+        for (let i = 0; i < slotsPerAttempt; i++) {
+          newCorrectness[currentAttempt][i] = "correct";
+        }
+
+        setCorrectness(newCorrectness);
+
+        alert("Parabéns! Acertaste na palavra!");
+        setGameOver(true);
+        return;
+      }
+
       const newCorrectness = correctness.map((attempt) => [...attempt]);
 
       const letterCounts = word.split("").reduce((acc, letter) => {
