@@ -7,5 +7,5 @@
 }
 
 .separator {
-    @apply w-full h-[0.1rem] bg-zinc-500 w-full mt-3 rounded-lg;
+    @apply w-full h-[0.1rem] bg-zinc-500 mt-3 rounded-lg;
 }

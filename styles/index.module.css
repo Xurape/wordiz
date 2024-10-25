@@ -15,17 +15,25 @@
 }
 
 .letter {
-    @apply w-10 h-10 md:w-16 md:h-16 text-4xl text-center text-white bg-zinc-800 outline-none ring-0 border-0 rounded-xl uppercase text-zinc-400 font-bold cursor-pointer antialiased transition-all duration-500 ease-in-out;
+    @apply w-10 h-10 md:w-16 md:h-16 text-4xl text-center text-zinc-400 bg-zinc-800 outline-none ring-0 border-0 rounded-xl uppercase font-bold cursor-pointer antialiased transition-all duration-500 ease-in-out;
 }
 
 .correct {
-    @apply bg-green-500;
+    @apply bg-green-500 text-white;
 }
 
 .incorrect {
-    @apply bg-yellow-500;
+    @apply bg-yellow-500 text-white;
 }
 
 .absent {
-    @apply bg-zinc-700;
+    @apply bg-zinc-700 text-white;
+}
+
+.confetti_left {
+    @apply absolute left-0 top-0 h-full;
+}
+
+.confetti_right {
+    @apply absolute right-0 top-0 h-full;
 }

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import styles from "@/styles/index.module.css";
 import Head from "next/head";
+import ConfettiExplosion from 'react-confetti-explosion';
 
 export default function Index() {
   let word = "arara";
@@ -9,6 +10,7 @@ export default function Index() {
   const slotsPerAttempt = word.length;
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [currentSlot, setCurrentSlot] = useState(0);
+  const [isExploding, setIsExploding] = useState(false);
   const [values, setValues] = useState(
     Array(maxAttempts)
       .fill("")
@@ -85,7 +87,11 @@ export default function Index() {
 
         setCorrectness(newCorrectness);
 
-        alert("Parabéns! Acertaste na palavra!");
+        // alert("Parabéns! Acertaste na palavra!");
+        setIsExploding(true);
+        setTimeout(() => {
+          setIsExploding(false);
+        }, 5000);
         setGameOver(true);
         return;
       }
@@ -147,6 +153,8 @@ export default function Index() {
       </Head>
       <div className={styles.main}>
         <h1 className={styles.h1}>Descobre a palavra diária ✨</h1>
+        <div className={styles.confetti_left}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
+        <div className={styles.confetti_right}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
         <div className={styles.words}>
           {Array.from({ length: maxAttempts }).map((_, index) => (
             <div key={index} className={styles.attempt}>
