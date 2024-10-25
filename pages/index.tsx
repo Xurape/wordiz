@@ -1,34 +1,27 @@
-import { useState, useRef, useEffect } from "react";
-import DefaultLayout from "@/layouts/default";
-import styles from "@/styles/index.module.css";
-import Head from "next/head";
-import ConfettiExplosion from "react-confetti-explosion";
+import { useState, useRef, useEffect } from 'react';
+import DefaultLayout from '@/layouts/default';
+import styles from '@/styles/index.module.css';
+import Head from 'next/head';
+import { isMobile } from '@/utils/detectMobile';
 import { getRandomWord, checkWord } from '@/server/data/words';
 
 export default function Index() {
   const length = 5;
-  const word = getRandomWord(5);
+  const word = getRandomWord(length);
   const maxAttempts = 6;
   const slotsPerAttempt = length;
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [currentSlot, setCurrentSlot] = useState(0);
-  const [isExploding, setIsExploding] = useState(false);
-  const [values, setValues] = useState(
-    Array(maxAttempts)
-      .fill("")
-      .map(() => Array(slotsPerAttempt).fill(""))
-  );
-  const [correctness, setCorrectness] = useState(
-    Array(maxAttempts)
-      .fill("")
-      .map(() => Array(slotsPerAttempt).fill(""))
-  );
+  const [values, setValues] = useState(Array(maxAttempts).fill('').map(() => Array(slotsPerAttempt).fill('')));
+  const [correctness, setCorrectness] = useState(Array(maxAttempts).fill('').map(() => Array(slotsPerAttempt).fill('')));
   const [gameOver, setGameOver] = useState(false);
-  const inputRefs = useRef(
-    Array(maxAttempts)
-      .fill(null)
-      .map(() => Array(slotsPerAttempt).fill(null))
-  );
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [bounce, setBounce] = useState(false); // New state to manage bounce animation
+  const inputRefs = useRef(Array(maxAttempts).fill(null).map(() => Array(slotsPerAttempt).fill(null)));
+
+  useEffect(() => {
+    setIsMobileDevice(isMobile());
+  }, []);
 
   useEffect(() => {
     if (inputRefs.current[currentAttempt][currentSlot]) {
@@ -41,10 +34,8 @@ export default function Index() {
       return;
     }
 
-    const newValues = values.map((attempt, i) =>
-      i === index
-        ? attempt.map((slot, j) => (j === slotIndex ? value : slot))
-        : attempt
+    const newValues = values.map((attempt, i) => 
+      i === index ? attempt.map((slot, j) => j === slotIndex ? value : slot) : attempt
     );
 
     setValues(newValues);
@@ -54,59 +45,27 @@ export default function Index() {
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    slotIndex: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleKeyDown = (index: number, slotIndex: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (gameOver) return;
 
-    if (
-      e.key === "Backspace" &&
-      values[index][slotIndex] === "" &&
-      slotIndex > 0
-    ) {
+    if (e.key === 'Backspace' && values[index][slotIndex] === '' && slotIndex > 0) {
       setCurrentSlot(slotIndex - 1);
-    } else if (
-      e.key === "Enter" &&
-      slotIndex === slotsPerAttempt - 1 &&
-      currentAttempt < maxAttempts - 1
-    ) {
-      const currentLetters = values[currentAttempt].filter(
-        (letter) => letter !== ""
-      ).length;
+    } else if (e.key === 'Enter' && slotIndex === slotsPerAttempt - 1 && currentAttempt < maxAttempts - 1) {
+      const currentLetters = values[currentAttempt].filter((letter) => letter !== '').length;
 
       if (currentLetters !== slotsPerAttempt) {
         return;
       }
 
-      if(!checkWord(values[currentAttempt].join(""))) {
-        // bounce all inputs of the current attempt because the word doesn't exist
-        return;
-      }
-
-      if (
-        values[currentAttempt].join("").toUpperCase() === word.toUpperCase()
-      ) {
-        const newCorrectness = correctness.map((attempt) => [...attempt]);
-
-        for (let i = 0; i < slotsPerAttempt; i++) {
-          newCorrectness[currentAttempt][i] = "correct";
-        }
-
-        setCorrectness(newCorrectness);
-
-        setIsExploding(true);
-        setTimeout(() => {
-          setIsExploding(false);
-        }, 5000);
-        setGameOver(true);
+      if (!checkWord(values[currentAttempt].join(""))) {
+        setBounce(true);
+        setTimeout(() => setBounce(false), 500);
         return;
       }
 
       const newCorrectness = correctness.map((attempt) => [...attempt]);
 
-      const letterCounts = word.split("").reduce((acc, letter) => {
+      const letterCounts = word.split('').reduce((acc, letter) => {
         acc[letter] = (acc[letter] || 0) + 1;
         return acc;
       }, {});
@@ -115,23 +74,19 @@ export default function Index() {
 
       for (let i = 0; i < slotsPerAttempt; i++) {
         if (values[currentAttempt][i] === word[i]) {
-          newCorrectness[currentAttempt][i] = "correct";
-          usedLetters[values[currentAttempt][i]] =
-            (usedLetters[values[currentAttempt][i]] || 0) + 1;
+          newCorrectness[currentAttempt][i] = 'correct';
+          usedLetters[values[currentAttempt][i]] = (usedLetters[values[currentAttempt][i]] || 0) + 1;
         }
       }
 
       for (let i = 0; i < slotsPerAttempt; i++) {
-        if (newCorrectness[currentAttempt][i] !== "correct") {
+        if (newCorrectness[currentAttempt][i] !== 'correct') {
           const letter = values[currentAttempt][i];
-          if (
-            word.includes(letter) &&
-            (usedLetters[letter] || 0) < letterCounts[letter]
-          ) {
-            newCorrectness[currentAttempt][i] = "incorrect";
+          if (word.includes(letter) && (usedLetters[letter] || 0) < letterCounts[letter]) {
+            newCorrectness[currentAttempt][i] = 'incorrect';
             usedLetters[letter] = (usedLetters[letter] || 0) + 1;
           } else {
-            newCorrectness[currentAttempt][i] = "absent";
+            newCorrectness[currentAttempt][i] = 'absent';
           }
         }
       }
@@ -142,76 +97,41 @@ export default function Index() {
     }
   };
 
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-    const isMobile = () => {
-      return /Mobi|Android/i.test(navigator.userAgent);
-    };
-    useEffect(() => {
-      setIsMobileDevice(isMobile());
-    }, []);
-
   return (
     <DefaultLayout>
       <Head>
         <title>Wordiz | Melhora o teu vocabulário em português!</title>
-        <meta
-          name="description"
-          content="Com o Wordiz, podes melhorar o teu vocabulário de uma forma divertida!"
-        />
+        <meta name="description" content="Com o Wordiz, podes melhorar o teu vocabulário de uma forma divertida!" />
       </Head>
-      {isMobileDevice && (
+      <div className={styles.main}>
+        <h1 className={styles.h1}>Descobre a palavra 🤔</h1>
+        {isMobileDevice && (
           <div className={styles.warning}>
             <p>Desculpa, mas o Wordiz ainda não está disponível para dispositivos móveis.</p>
           </div>
-      )}
-      {!isMobileDevice && (
-      <div className={styles.main}>
-        <h1 className={styles.h1}>Descobre a palavra 🫣</h1>
-        <div className={styles.confetti_left}>
-          {isExploding && (
-            <ConfettiExplosion width={1000} particleCount={300} />
-          )}
-        </div>
-        <div className={styles.confetti_right}>
-          {isExploding && (
-            <ConfettiExplosion width={1000} particleCount={300} />
-          )}
-        </div>
-        <div className={styles.words}>
-          {Array.from({ length: maxAttempts }).map((_, index) => (
-            <div key={index} className={styles.attempt}>
-              {Array.from({ length: slotsPerAttempt }).map((_, slotIndex) => (
-                <input
-                  type="text"
-                  maxLength={1}
-                  value={values[index][slotIndex]}
-                  key={slotIndex}
-                  ref={(el) => (inputRefs.current[index][slotIndex] = el)}
-                  onChange={(e) =>
-                    handleChange(index, slotIndex, e.target.value)
-                  }
-                  onKeyDown={(e) => handleKeyDown(index, slotIndex, e)}
-                  className={`${styles.letter} ${
-                    correctness[index][slotIndex] === "correct"
-                      ? styles.correct
-                      : correctness[index][slotIndex] === "incorrect"
-                      ? styles.incorrect
-                      : correctness[index][slotIndex] === "absent"
-                      ? styles.absent
-                      : ""
-                  }`}
-                  disabled={
-                    index !== currentAttempt ||
-                    (index === currentAttempt && slotIndex !== currentSlot) ||
-                    gameOver
-                  }
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+        )}
+        {!isMobileDevice &&
+          <div className={styles.words}>
+            {Array.from({ length: maxAttempts }).map((_, index) => (
+              <div key={index} className={styles.attempt}>
+                {Array.from({ length: slotsPerAttempt }).map((_, slotIndex) => (
+                  <input
+                    type="text"
+                    maxLength={1}
+                    value={values[index][slotIndex]}
+                    key={slotIndex}
+                    ref={(el) => inputRefs.current[index][slotIndex] = el}
+                    onChange={(e) => handleChange(index, slotIndex, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, slotIndex, e)}
+                    className={`${styles.letter} ${correctness[index][slotIndex] === 'correct' ? styles.correct : correctness[index][slotIndex] === 'incorrect' ? styles.incorrect : correctness[index][slotIndex] === 'absent' ? styles.absent : ''} ${bounce && index === currentAttempt ? styles.bounce : ''}`}
+                    disabled={index !== currentAttempt || (index === currentAttempt && slotIndex !== currentSlot) || gameOver}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        }
       </div>
-      )}
     </DefaultLayout>
   );
 }
