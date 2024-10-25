@@ -5,3 +5,7 @@
 .links {
     @apply flex flex-row items-center justify-center gap-4;
 }
+
+.a {
+    @apply text-zinc-500;
+}

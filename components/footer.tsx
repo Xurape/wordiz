@@ -4,12 +4,12 @@ export default function Footer() {
     return (
         <footer className={styles.footer}>
             <div className={styles.links}>
-            &copy; 2024 Wordiz. All rights reserved.
+            <span>Made by <a href="https://joaopferreira.me" className={styles.a}>João Ferreira</a></span>
             </div>
             <div className={styles.links}>
-                <a>link 1</a>
+                <a href="https://joaopferreira.me" className={styles.a}>Portfolio</a>
                 <>|</>
-                <a>link 2</a>
+                <a href="https://github.com/xurape" className={styles.a}>GitHub</a>
             </div>
         </footer>
     );

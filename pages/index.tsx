@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import DefaultLayout from "@/layouts/default";
 import styles from "@/styles/index.module.css";
 import Head from "next/head";
-import ConfettiExplosion from 'react-confetti-explosion';
+import ConfettiExplosion from "react-confetti-explosion";
+import { getRandomWord, checkWord } from '@/server/data/words';
 
 export default function Index() {
-  let word = "arara";
+  const length = 5;
+  const word = getRandomWord(5);
   const maxAttempts = 6;
-  const slotsPerAttempt = word.length;
+  const slotsPerAttempt = length;
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [currentSlot, setCurrentSlot] = useState(0);
   const [isExploding, setIsExploding] = useState(false);
@@ -78,7 +80,14 @@ export default function Index() {
         return;
       }
 
-      if (values[currentAttempt].join("").toUpperCase() === word.toUpperCase()) {
+      if(!checkWord(values[currentAttempt].join(""))) {
+        // bounce all inputs of the current attempt because the word doesn't exist
+        return;
+      }
+
+      if (
+        values[currentAttempt].join("").toUpperCase() === word.toUpperCase()
+      ) {
         const newCorrectness = correctness.map((attempt) => [...attempt]);
 
         for (let i = 0; i < slotsPerAttempt; i++) {
@@ -133,6 +142,14 @@ export default function Index() {
     }
   };
 
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+    const isMobile = () => {
+      return /Mobi|Android/i.test(navigator.userAgent);
+    };
+    useEffect(() => {
+      setIsMobileDevice(isMobile());
+    }, []);
+
   return (
     <DefaultLayout>
       <Head>
@@ -142,10 +159,24 @@ export default function Index() {
           content="Com o Wordiz, podes melhorar o teu vocabulário de uma forma divertida!"
         />
       </Head>
+      {isMobileDevice && (
+          <div className={styles.warning}>
+            <p>Desculpa, mas o Wordiz ainda não está disponível para dispositivos móveis.</p>
+          </div>
+      )}
+      {!isMobileDevice && (
       <div className={styles.main}>
         <h1 className={styles.h1}>Descobre a palavra 🫣</h1>
-        <div className={styles.confetti_left}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
-        <div className={styles.confetti_right}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
+        <div className={styles.confetti_left}>
+          {isExploding && (
+            <ConfettiExplosion width={1000} particleCount={300} />
+          )}
+        </div>
+        <div className={styles.confetti_right}>
+          {isExploding && (
+            <ConfettiExplosion width={1000} particleCount={300} />
+          )}
+        </div>
         <div className={styles.words}>
           {Array.from({ length: maxAttempts }).map((_, index) => (
             <div key={index} className={styles.attempt}>
@@ -180,6 +211,7 @@ export default function Index() {
           ))}
         </div>
       </div>
+      )}
     </DefaultLayout>
   );
 }
