@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
 import styles from "@/styles/layouts/default.module.css";
 import Footer from "@/components/footer";
-
-export const metadata: Metadata = {
-  title: "Wordiz | Level up your vocabulary",
-  description:
-    "Wordiz is a small platform to help you level up your vocabulary",
-};
+import Topbar from "@/components/topbar";
 
 export default function DefaultLayout({
   children,
@@ -15,6 +9,7 @@ export default function DefaultLayout({
 }>) {
   return (
     <>
+      <Topbar />
       <main className={styles.main}>{children}</main>
       <Footer />
     </>
