@@ -3,9 +3,9 @@
 }
 
 .a {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold w-full;
 }
 
 .separator {
-    @apply w-full h-[0.01rem] bg-zinc-500;
+    @apply w-full h-[0.1rem] bg-zinc-500 w-full mt-3 rounded-lg;
 }

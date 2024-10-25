@@ -8,10 +8,10 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className={styles.app}>
       <Topbar />
       <main className={styles.main}>{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }

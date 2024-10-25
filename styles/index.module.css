@@ -1,0 +1,27 @@
+.main {
+    @apply w-full h-full flex flex-col items-start justify-center;
+}
+
+.h1 {
+    @apply text-2xl font-thin w-full text-center;
+}
+
+.words {
+    @apply flex flex-col justify-center items-center gap-2 mt-6;
+}
+
+.attempt {
+    @apply flex flex-row justify-center items-center gap-2;
+}
+
+.letter {
+    @apply w-10 h-10 md:w-16 md:h-16 text-4xl text-center bg-zinc-800 outline-none ring-0 border-0 rounded-xl uppercase text-zinc-400 font-bold cursor-pointer;
+}
+
+.correct {
+    @apply bg-green-500 text-white;
+}
+
+.wrong {
+    @apply bg-yellow-500 text-white;
+}
