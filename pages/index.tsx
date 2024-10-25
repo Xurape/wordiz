@@ -4,12 +4,13 @@ import styles from '@/styles/index.module.css';
 import Head from 'next/head';
 import { isMobile } from '@/utils/detectMobile';
 import { getRandomWord, checkWord } from '@/server/data/words';
+import ConfettiExplosion from 'react-confetti-explosion';
 
 export default function Index() {
   const length = 5;
-  const word = getRandomWord(length);
   const maxAttempts = 6;
   const slotsPerAttempt = length;
+  const [word, setWord] = useState('');
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [currentSlot, setCurrentSlot] = useState(0);
   const [values, setValues] = useState(Array(maxAttempts).fill('').map(() => Array(slotsPerAttempt).fill('')));
@@ -17,10 +18,15 @@ export default function Index() {
   const [gameOver, setGameOver] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [bounce, setBounce] = useState(false); // New state to manage bounce animation
+  const [isExploding, setIsExploding] = useState(false);
   const inputRefs = useRef(Array(maxAttempts).fill(null).map(() => Array(slotsPerAttempt).fill(null)));
 
   useEffect(() => {
     setIsMobileDevice(isMobile());
+  }, []);
+
+  useEffect(() => {
+    setWord(getRandomWord(length));
   }, []);
 
   useEffect(() => {
@@ -50,8 +56,13 @@ export default function Index() {
 
     if (e.key === 'Backspace' && values[index][slotIndex] === '' && slotIndex > 0) {
       setCurrentSlot(slotIndex - 1);
-    } else if (e.key === 'Enter' && slotIndex === slotsPerAttempt - 1 && currentAttempt < maxAttempts - 1) {
+    } else if (e.key === 'Enter' && slotIndex === slotsPerAttempt - 1) {
       const currentLetters = values[currentAttempt].filter((letter) => letter !== '').length;
+
+      if(currentAttempt === maxAttempts - 1 && values[currentAttempt].join('') !== word) {
+        setGameOver(true);
+        return;
+      }
 
       if (currentLetters !== slotsPerAttempt) {
         return;
@@ -61,6 +72,13 @@ export default function Index() {
         setBounce(true);
         setTimeout(() => setBounce(false), 500);
         return;
+      }
+
+      if(values[currentAttempt].join('') === word) {
+        setIsExploding(true);
+        setTimeout(() => {
+          setIsExploding(false);
+        }, 5000);
       }
 
       const newCorrectness = correctness.map((attempt) => [...attempt]);
@@ -105,6 +123,13 @@ export default function Index() {
       </Head>
       <div className={styles.main}>
         <h1 className={styles.h1}>Descobre a palavra 🤔</h1>
+        <div className={styles.confetti_left}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
+        <div className={styles.confetti_right}>{isExploding && <ConfettiExplosion width={1000} particleCount={300} />}</div>
+        {gameOver && (
+          <div className={styles.gameOver}>
+            <p>Game Over! A palavra era {word}</p>
+          </div>
+        )}
         {isMobileDevice && (
           <div className={styles.warning}>
             <p>Desculpa, mas o Wordiz ainda não está disponível para dispositivos móveis.</p>
