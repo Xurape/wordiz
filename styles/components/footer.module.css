@@ -1,0 +1,7 @@
+.footer {
+    @apply flex flex-col text-zinc-500 text-sm;
+}
+
+.links {
+    @apply flex flex-row items-center justify-center gap-4;
+}
