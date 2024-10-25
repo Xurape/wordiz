@@ -1,5 +1,6 @@
+/* fix to bottom */
 .footer {
-    @apply flex flex-col text-zinc-500 text-sm;
+    @apply fixed bottom-5 left-0 right-0 z-50 flex flex-col gap-1 text-zinc-500 text-sm;
 }
 
 .links {

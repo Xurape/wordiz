@@ -1,10 +1,9 @@
+import Topbar from '@/components/topbar';
 import DefaultLayout from '@/layouts/default';
+// import styles from '@/styles/index.module.css';
 
 export default function Index() {
   return <DefaultLayout>
-    <div>
-      <h1>Wordiz</h1>
-      <p>Level up your vocabulary</p>
-    </div>
+    <Topbar />
   </DefaultLayout>;
 }
