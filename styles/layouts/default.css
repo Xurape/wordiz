@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
-body {
+.body {
     @apply bg-zinc-900 flex flex-col items-center justify-center text-zinc-300 font-['Raleway'];
 }
 

@@ -83,12 +83,12 @@ export default function Index() {
 
       const newCorrectness = correctness.map((attempt) => [...attempt]);
 
-      const letterCounts = word.split('').reduce((acc, letter) => {
+      const letterCounts = word.split('').reduce((acc: { [key: string]: number }, letter: string) => {
         acc[letter] = (acc[letter] || 0) + 1;
         return acc;
-      }, {});
+      }, {} as { [key: string]: number });
 
-      const usedLetters = {};
+      const usedLetters: { [key: string]: number } = {};
 
       for (let i = 0; i < slotsPerAttempt; i++) {
         if (values[currentAttempt][i] === word[i]) {
@@ -145,7 +145,9 @@ export default function Index() {
                     maxLength={1}
                     value={values[index][slotIndex]}
                     key={slotIndex}
-                    ref={(el) => inputRefs.current[index][slotIndex] = el}
+                    ref={(el) => {
+                      inputRefs.current[index][slotIndex] = el;
+                    }}
                     onChange={(e) => handleChange(index, slotIndex, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, slotIndex, e)}
                     className={`${styles.letter} ${correctness[index][slotIndex] === 'correct' ? styles.correct : correctness[index][slotIndex] === 'incorrect' ? styles.incorrect : correctness[index][slotIndex] === 'absent' ? styles.absent : ''} ${bounce && index === currentAttempt ? styles.bounce : ''}`}

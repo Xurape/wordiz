@@ -1,4 +1,3 @@
-import styles from "@/styles/layouts/default.module.css";
 import Footer from "@/components/footer";
 import Topbar from "@/components/topbar";
 
@@ -8,9 +7,9 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={styles.app}>
+    <div className="app">
       <Topbar />
-      <main className={styles.main}>{children}</main>
+      <main className="main">{children}</main>
       <Footer />
     </div>
   );
